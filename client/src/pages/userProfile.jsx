@@ -11,16 +11,25 @@ export default function UserProfile({ user, onNavigate, onLogout }) {
     imageData: ""
   });
 
-  useEffect(() => {
-    API.getImages(user.id).then(setImages);
-  }, [user.id]);
-
   const upload = async () => {
-    if (!form.imageData || !form.title) return alert("Title & image required");
-    await API.uploadImage(user.id, form.imageData, form.title, form.description);
-    setImages(await API.getImages(user.id));
+  if (!form.imageData || !form.title) {
+    alert("Title & image required");
+    return;
+  }
+
+  try {
+    await API.uploadImage(
+      form.imageData,
+      form.title,
+      form.description
+    );
+
+    setImages(await API.getImages());
     setForm({ title: "", description: "", imageData: "" });
-  };
+  } catch (err) {
+    alert(err.message);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
